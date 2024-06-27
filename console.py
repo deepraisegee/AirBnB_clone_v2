@@ -127,12 +127,41 @@ class HBNBCommand(cmd.Cmd):
         if cls not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
+        
+        #initialize an empty dictionary to store attributes
+        new_att = {}
 
-        kwargs = kwargs_to_dict([1:])
-        new_instance = HBNBCommand.classes[args](**kwargs)
-        storage.save()
-        print(new_instance.id)
-        storage.save()
+        # loop through the remaining parts to parse parameters
+        for a in args[1:]:
+            # split each part into key=value pair
+            try:
+                key, value_str = args.split('=')
+                
+                # process value based on type:
+                if value_str.startswith('"') and value_str.endswith('"'):
+                    # string value handling
+                    value = value_str[1:-1].replace('_', ' ')
+                elif '.' in value_str:
+                    # float value handling
+                    value = float(value_str)
+
+                else:
+                    # integer value handling (default case)
+                    value = int(value_str)
+
+                # Add parsed key-value pair to attributes dictionary
+                new_att[key] = value
+
+            except ValueError:
+                # if there is an error in splitting or converting, skip the parameter:
+                print(f"Skipped parameter: {args}")
+
+
+        #kwargs = kwargs_to_dict([1:])
+        #new_instance = HBNBCommand.classes[args](**kwargs)
+        #storage.save()
+        #print(new_instance.id)
+        #storage.save()
 
     def help_create(self):
         """ Help information for the create method """
